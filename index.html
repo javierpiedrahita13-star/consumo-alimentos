@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consumo Alimentos</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    .card {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .ok {
+      color: green;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Registro Consumo</h2>
+
+  <label>Sede</label>
+  <select id="sede">
+    <option>CAÑAVERAL</option>
+    <option>ARRECIFE</option>
+  </select>
+
+  <label>Tipo de comida</label>
+  <select id="tipo">
+    <option>DESAYUNO</option>
+    <option>ALMUERZO</option>
+    <option>CENA</option>
+  </select>
+
+  <label>Producto</label>
+  <input type="text" id="producto" placeholder="Ej: Arroz">
+
+  <label>Cantidad</label>
+  <input type="number" id="cantidad">
+
+  <button onclick="guardar()">Guardar</button>
+
+  <p id="msg" class="ok"></p>
+</div>
+
+<script>
+function guardar() {
+  let sede = document.getElementById("sede").value;
+  let tipo = document.getElementById("tipo").value;
+  let producto = document.getElementById("producto").value;
+  let cantidad = document.getElementById("cantidad").value;
+
+  if (!producto || !cantidad) {
+    alert("Completa todos los campos");
+    return;
+  }
+
+  let data = {
+    sede,
+    tipo,
+    producto,
+    cantidad,
+    fecha: new Date().toLocaleString()
+  };
+
+  let registros = JSON.parse(localStorage.getItem("consumos")) || [];
+  registros.push(data);
+
+  localStorage.setItem("consumos", JSON.stringify(registros));
+
+  document.getElementById("msg").innerText = "Guardado ✔";
+
+  document.getElementById("producto").value = "";
+  document.getElementById("cantidad").value = "";
+}
+</script>
+
+</body>
+</html>
