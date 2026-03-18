@@ -120,7 +120,7 @@ let productos=document.querySelectorAll(".producto");
 let cantidades=document.querySelectorAll(".cantidad");
 
 let registros=JSON.parse(localStorage.getItem("consumos"))||[];
-
+      
 for(let i=0;i<productos.length;i++){
 
 if(!cantidades[i].value) continue;
