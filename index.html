@@ -1,3 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consumo Alimentos</title>
+
+<style>
+body { font-family: Arial; background:#f4f4f4; padding:20px; }
+.card { max-width:420px; margin:auto; background:white; padding:20px; border-radius:10px; }
+h2 { text-align:center; }
+select, input, button { width:100%; padding:10px; margin-top:10px; }
+button { background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer; }
+.item { border:1px solid #ddd; padding:10px; margin-top:10px; border-radius:5px; }
+table { width:100%; margin-top:10px; border-collapse: collapse; }
+th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>Registro Consumo</h2>
+
+<label>Fecha</label>
+<input type="date" id="fecha">
+
+<label>Sede</label>
+<select id="sede">
+<option>CAÑAVERAL</option>
+<option>ARRECIFE</option>
+</select>
+
+<label>Tipo de comida</label>
+<select id="tipo">
+<option>DESAYUNO</option>
+<option>ALMUERZO</option>
+<option>CENA</option>
+</select>
+
+<div id="productos"></div>
+
+<button type="button" onclick="agregarProducto()">+ Agregar producto</button>
+<button type="button" onclick="guardarTodo()">Guardar Todo</button>
+
+<div id="tabla"></div>
+
+</div>
+
 <script>
 
 const data = {
@@ -9,15 +58,27 @@ const data = {
 "ABARROTES": ["ACEITE","ARROZ","AZUCAR","CHOCOLATE","FIDEOS","FRIJOL","GARBANZO","HARINA MAIZ","HARINA TRIGO","LENTEJA","MAYONEZA","MOSTAZA","PANELA","PASTA TOMATE","ESPAGUETI","PIMIENTA","SAL","SALSA NEGRA","SALSA SOYA","SALSA TOMATE","VINAGRE","PULPA FRUTA"]
 };
 
-// fecha
+// fecha automática
 let hoy = new Date().toISOString().split('T')[0];
 document.getElementById("fecha").value = hoy;
 
-// TABLA
+// lista temporal
 let lista = [];
 
+// cargar productos
 function cargarProductos(area, select){
-select.innerHTML="";
+
+select.innerHTML = "";
+
+// opción vacía
+let opDefault = document.createElement("option");
+opDefault.value = "";
+opDefault.textContent = "Seleccione producto";
+opDefault.disabled = true;
+opDefault.selected = true;
+select.appendChild(opDefault);
+
+// productos reales
 data[area].forEach(p=>{
 let op=document.createElement("option");
 op.value=p;
@@ -26,16 +87,25 @@ select.appendChild(op);
 });
 }
 
-// crear fila de ingreso
+// agregar fila
 function agregarProducto(){
 
 let contenedor = document.getElementById("productos");
-contenedor.innerHTML = ""; // solo uno a la vez
+contenedor.innerHTML = "";
 
 let div = document.createElement("div");
 div.className="item";
 
+// AREA
 let area = document.createElement("select");
+
+let opArea = document.createElement("option");
+opArea.value="";
+opArea.textContent="Seleccione área";
+opArea.disabled=true;
+opArea.selected=true;
+area.appendChild(opArea);
+
 Object.keys(data).forEach(key=>{
 let op=document.createElement("option");
 op.value=key;
@@ -43,37 +113,48 @@ op.textContent=key;
 area.appendChild(op);
 });
 
+// PRODUCTO
 let producto = document.createElement("select");
+
+// CANTIDAD
 let cantidad = document.createElement("input");
 cantidad.type="number";
 cantidad.placeholder="Cantidad";
 
-cargarProductos(area.value, producto);
+// cambiar productos
+area.addEventListener("change", function(){
+cargarProductos(this.value, producto);
+});
 
-area.onchange = ()=> cargarProductos(area.value, producto);
-
-// botón agregar a tabla
+// botón agregar
 let btn = document.createElement("button");
 btn.textContent = "Agregar a lista";
 btn.type="button";
 
 btn.onclick = ()=>{
+
+if(!area.value){
+alert("Selecciona un área");
+return;
+}
+
+if(!producto.value){
+alert("Selecciona un producto");
+return;
+}
+
 if(!cantidad.value){
 alert("Ingresa cantidad");
 return;
 }
 
-// guardar en array
 lista.push({
 area: area.value,
 producto: producto.value,
 cantidad: cantidad.value
 });
 
-// render tabla
 renderTabla();
-
-// limpiar
 agregarProducto();
 };
 
@@ -85,18 +166,11 @@ div.appendChild(btn);
 contenedor.appendChild(div);
 }
 
-// mostrar tabla
+// render tabla
 function renderTabla(){
 
-let cont = document.getElementById("tabla");
-if(!cont){
-cont = document.createElement("div");
-cont.id="tabla";
-document.querySelector(".card").appendChild(cont);
-}
-
 let html = `
-<table border="1" style="width:100%; margin-top:10px; border-collapse:collapse;">
+<table>
 <tr>
 <th>Área</th>
 <th>Producto</th>
@@ -116,10 +190,10 @@ html += `
 
 html += "</table>";
 
-cont.innerHTML = html;
+document.getElementById("tabla").innerHTML = html;
 }
 
-// guardar todo
+// guardar
 function guardarTodo(){
 
 let sede=document.getElementById("sede").value;
@@ -143,7 +217,6 @@ localStorage.setItem("consumos",JSON.stringify(registros));
 
 alert("Guardado ✔");
 
-// reset
 lista = [];
 document.getElementById("tabla").innerHTML="";
 agregarProducto();
@@ -153,3 +226,6 @@ agregarProducto();
 agregarProducto();
 
 </script>
+
+</body>
+</html>
