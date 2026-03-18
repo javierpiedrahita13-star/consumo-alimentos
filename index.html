@@ -1,4 +1,28 @@
 <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consumo Alimentos</title>
+
+  <style>
+    body { font-family: Arial; background:#f4f4f4; padding:20px; }
+    .card { max-width:420px; margin:auto; background:white; padding:20px; border-radius:10px; }
+    h2 { text-align:center; }
+    select, input, button { width:100%; padding:10px; margin-top:10px; }
+    button { background:#28a745; color:white; border:none; border-radius:5px; }
+    .ok { color:green; text-align:center; }
+    .item { border:1px solid #ddd; padding:10px; margin-top:10px; border-radius:5px; }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Registro Consumo</h2>
+
+  <label>Sede</label>
+  <select id="sede">
     <option>CAÑAVERAL</option>
     <option>ARRECIFE</option>
   </select>
@@ -20,63 +44,32 @@
 </div>
 
 <script>
-let contador = 0;
+// LISTA DE PRODUCTOS AGRUPADOS
+const productosData = {
+  "FRUVER": [
+    "AHUYAMA","AJO","APIO","CEBOLLA BLANCA","CEBOLLA ROJA","CEBOLLA LARGA","CILANTRO / ESPINACA","HABICHUELA","LECHUGA BATAVIA","LIMON","MAZORCA","PAPA","PEPINO COHOMBRO","PIMENTON ROJO","PIMENTON VERDE","PLATANO","PLATANO VERDE","REMOLACHA","REPOLLO BLANCO","REPOLLO MORADO","TAMARINDO","TOMATE","YUCA","ZANAHORA","ZUKINI VERDE","OTRO"
+  ],
+  "LACTEOS Y EMBUTIDOS": [
+    "CREMA DE LECHE","HUEVOS","JAMON","LECHE ENTERA","PAN TAJADO","QUESO COSTEÑO","QUESO MOZARELLA","SALCHICHA"
+  ],
+  "CARNES BLANCAS": [
+    "GOULASH DE CERDO","PULPA DE CERDO"
+  ],
+  "CARNES ROJAS": [
+    "CARNE PARA ASAR","CARNE MOLIDA","MONDONGO","CARNE DESMECHADA","COSTILLA RES","GOULASH DE RES","HIGADO"
+  ],
+  "PESCADOS": [
+    "BONITO / MACARELA","RECORTE DE ROBALO","CHIVO"
+  ],
+  "GRANOS Y ABARROTES": [
+    "ACEITE","ARROZ","AZUCAR","CHOCOLATE","FIDEOS","FRIJOL ROJO","GARBANZO","HARINA DE MAIZ","HARINA DE TRIGO","LENTEJA","MAYONEZA","MOSTAZA","PANELA","PASTA DE TOMATE","PASTA ESPAGUETI","PIMIENTA","SAL","SALSA NEGRA","SALSA SOYA","SALSA TOMATE","VINAGRE BLANCO","PULPA FRUTA"
+  ]
+};
 
-function agregarProducto() {
-  contador++;
+function crearSelectProductos() {
+  let select = document.createElement("select");
+  select.className = "producto";
 
-  let div = document.createElement("div");
-  div.className = "item";
-  div.innerHTML = `
-    <label>Producto</label>
-    <input type="text" class="producto" placeholder="Ej: Arroz">
-
-    <label>Cantidad</label>
-    <input type="number" class="cantidad">
-  `;
-
-  document.getElementById("productos").appendChild(div);
-}
-
-function guardarTodo() {
-  let sede = document.getElementById("sede").value;
-  let tipo = document.getElementById("tipo").value;
-
-  let productos = document.querySelectorAll(".producto");
-  let cantidades = document.querySelectorAll(".cantidad");
-
-  if (productos.length === 0) {
-    alert("Agrega al menos un producto");
-    return;
-  }
-
-  let registros = JSON.parse(localStorage.getItem("consumos")) || [];
-
-  for (let i = 0; i < productos.length; i++) {
-    let prod = productos[i].value;
-    let cant = cantidades[i].value;
-
-    if (!prod || !cant) continue;
-
-    registros.push({
-      sede,
-      tipo,
-      producto: prod,
-      cantidad: cant,
-      fecha: new Date().toLocaleString()
-    });
-  }
-
-  localStorage.setItem("consumos", JSON.stringify(registros));
-
-  document.getElementById("msg").innerText = "Guardado ✔";
-
-  document.getElementById("productos").innerHTML = "";
-}
-
-// Agregar uno por defecto
-agregarProducto();
-</script>
-
-</body>
+  for (let categoria in productosData) {
+    let optgroup = document.createElement("optgroup");
 </html>
