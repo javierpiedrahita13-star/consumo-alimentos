@@ -54,9 +54,10 @@ const data = {
 "ABARROTES": ["ACEITE","ARROZ","AZUCAR","CHOCOLATE","FIDEOS","FRIJOL","GARBANZO","HARINA MAIZ","HARINA TRIGO","LENTEJA","MAYONEZA","MOSTAZA","PANELA","PASTA TOMATE","ESPAGUETI","PIMIENTA","SAL","SALSA NEGRA","SALSA SOYA","SALSA TOMATE","VINAGRE","PULPA FRUTA"]
 };
 
-// poner fecha de hoy por defecto
-document.getElementById("fecha").valueAsDate = new Date();
-
+// poner fecha de hoy (compatible con todos)
+let hoy = new Date().toISOString().split('T')[0];
+document.getElementById("fecha").value = hoy;
+  
 function cargarProductos(area, select){
 select.innerHTML="";
 data[area].forEach(p=>{
