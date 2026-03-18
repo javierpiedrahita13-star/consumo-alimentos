@@ -70,7 +70,6 @@ function cargarProductos(area, select){
 
 select.innerHTML = "";
 
-// opción vacía
 let opDefault = document.createElement("option");
 opDefault.value = "";
 opDefault.textContent = "Seleccione producto";
@@ -78,7 +77,6 @@ opDefault.disabled = true;
 opDefault.selected = true;
 select.appendChild(opDefault);
 
-// productos reales
 data[area].forEach(p=>{
 let op=document.createElement("option");
 op.value=p;
@@ -116,6 +114,12 @@ area.appendChild(op);
 // PRODUCTO
 let producto = document.createElement("select");
 
+// INPUT MANUAL
+let productoManual = document.createElement("input");
+productoManual.type = "text";
+productoManual.placeholder = "Escriba el producto";
+productoManual.style.display = "none";
+
 // CANTIDAD
 let cantidad = document.createElement("input");
 cantidad.type="number";
@@ -124,6 +128,18 @@ cantidad.placeholder="Cantidad";
 // cambiar productos
 area.addEventListener("change", function(){
 cargarProductos(this.value, producto);
+productoManual.style.display = "none";
+productoManual.value = "";
+});
+
+// detectar OTRO
+producto.addEventListener("change", function(){
+if(this.value === "OTRO"){
+productoManual.style.display = "block";
+} else {
+productoManual.style.display = "none";
+productoManual.value = "";
+}
 });
 
 // botón agregar
@@ -143,6 +159,11 @@ alert("Selecciona un producto");
 return;
 }
 
+if(producto.value === "OTRO" && !productoManual.value){
+alert("Escribe el producto");
+return;
+}
+
 if(!cantidad.value){
 alert("Ingresa cantidad");
 return;
@@ -150,7 +171,7 @@ return;
 
 lista.push({
 area: area.value,
-producto: producto.value,
+producto: producto.value === "OTRO" ? productoManual.value : producto.value,
 cantidad: cantidad.value
 });
 
@@ -160,6 +181,7 @@ agregarProducto();
 
 div.appendChild(area);
 div.appendChild(producto);
+div.appendChild(productoManual);
 div.appendChild(cantidad);
 div.appendChild(btn);
 
@@ -199,6 +221,16 @@ function guardarTodo(){
 let sede=document.getElementById("sede").value;
 let tipo=document.getElementById("tipo").value;
 let fecha=document.getElementById("fecha").value;
+
+if(!sede){
+alert("Selecciona una sede");
+return;
+}
+
+if(!tipo){
+alert("Selecciona tipo de comida");
+return;
+}
 
 let registros=JSON.parse(localStorage.getItem("consumos"))||[];
 
