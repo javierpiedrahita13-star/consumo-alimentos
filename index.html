@@ -133,14 +133,17 @@ productoManual.value = "";
 });
 
 // detectar OTRO
-producto.addEventListener("change", function(){
-if(this.value === "OTRO"){
+function verificarOtro(){
+if(producto.value === "OTRO"){
 productoManual.style.display = "block";
 } else {
 productoManual.style.display = "none";
 productoManual.value = "";
 }
-});
+}
+
+// evento cambio producto
+producto.addEventListener("change", verificarOtro);
 
 // botón agregar
 let btn = document.createElement("button");
