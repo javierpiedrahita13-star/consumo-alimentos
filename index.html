@@ -35,8 +35,10 @@ button { background:#28a745; color:white; border:none; border-radius:5px; }
 
 <div id="productos"></div>
 
-<button onclick="agregarProducto()">+ Agregar producto</button>
-<button onclick="guardarTodo()">Guardar Todo</button>
+<!-- 👇 IMPORTANTE: type="button" -->
+<button type="button" onclick="agregarProducto()">+ Agregar producto</button>
+<button type="button" onclick="guardarTodo()">Guardar Todo</button>
+
 </div>
 
 <script>
@@ -50,7 +52,21 @@ const data = {
 "ABARROTES": ["ACEITE","ARROZ","AZUCAR","CHOCOLATE","FIDEOS","FRIJOL","GARBANZO","HARINA MAIZ","HARINA TRIGO","LENTEJA","MAYONEZA","MOSTAZA","PANELA","PASTA TOMATE","ESPAGUETI","PIMIENTA","SAL","SALSA NEGRA","SALSA SOYA","SALSA TOMATE","VINAGRE","PULPA FRUTA"]
 };
 
+// ✅ CARGAR PRODUCTOS SEGÚN ÁREA
+function cargarProductos(area, select){
+select.innerHTML="";
+data[area].forEach(p=>{
+let op=document.createElement("option");
+op.value=p;
+op.textContent=p;
+select.appendChild(op);
+});
+}
+
+// ✅ AGREGAR PRODUCTO (CORREGIDO)
 function agregarProducto(){
+
+let contenedor = document.getElementById("productos");
 
 let div = document.createElement("div");
 div.className="item";
@@ -59,12 +75,12 @@ div.className="item";
 let area = document.createElement("select");
 area.className="area";
 
-for(let key in data){
-let op = document.createElement("option");
+Object.keys(data).forEach(key=>{
+let op=document.createElement("option");
 op.value=key;
 op.textContent=key;
 area.appendChild(op);
-}
+});
 
 // PRODUCTO
 let producto = document.createElement("select");
@@ -74,6 +90,64 @@ producto.className="producto";
 let cantidad = document.createElement("input");
 cantidad.type="number";
 cantidad.className="cantidad";
+cantidad.placeholder="Cantidad";
 
 // cargar productos iniciales
+cargarProductos(area.value, producto);
+
+// evento cambio área
+area.addEventListener("change", function(){
+cargarProductos(this.value, producto);
+});
+
+// agregar al div
+div.appendChild(area);
+div.appendChild(producto);
+div.appendChild(cantidad);
+
+// agregar al contenedor
+contenedor.appendChild(div);
+}
+
+// ✅ GUARDAR TODO
+function guardarTodo(){
+
+let sede=document.getElementById("sede").value;
+let tipo=document.getElementById("tipo").value;
+
+let areas=document.querySelectorAll(".area");
+let productos=document.querySelectorAll(".producto");
+let cantidades=document.querySelectorAll(".cantidad");
+
+let registros=JSON.parse(localStorage.getItem("consumos"))||[];
+
+for(let i=0;i<productos.length;i++){
+
+if(!cantidades[i].value) continue;
+
+registros.push({
+sede,
+tipo,
+area:areas[i].value,
+producto:productos[i].value,
+cantidad:cantidades[i].value,
+fecha: new Date().toLocaleString()
+});
+}
+
+localStorage.setItem("consumos",JSON.stringify(registros));
+
+alert("Guardado ✔");
+
+// limpiar
+document.getElementById("productos").innerHTML="";
+agregarProducto();
+}
+
+// iniciar con uno
+agregarProducto();
+
+</script>
+
+</body>
 </html>
